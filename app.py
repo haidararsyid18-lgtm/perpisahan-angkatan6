@@ -1,11 +1,11 @@
 import streamlit as st
 import time
 from PIL import Image
+import os
 
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(page_title="Kenangan Angkatan 6", page_icon="🎓", layout="centered")
 
-# CSS untuk tampilan gelap yang estetik
 st.markdown("""
     <style>
     .stApp { background-color: #0e1117; color: white; }
@@ -13,6 +13,18 @@ st.markdown("""
     .stButton>button { width: 100%; border-radius: 25px; background-color: #1f77b4; color: white; height: 3em; }
     </style>
     """, unsafe_allow_html=True)
+
+# Fungsi untuk mencari file gambar secara otomatis (cek huruf besar/kecil)
+def ambil_gambar(nama_file):
+    # Daftar kemungkinan ekstensi
+    ekstensi = ['.jpg', '.JPG', '.jpeg', '.png']
+    nama_tanpa_ext = os.path.splitext(nama_file)[0]
+    
+    for ext in ekstensi:
+        path = nama_tanpa_ext + ext
+        if os.path.exists(path):
+            return Image.open(path)
+    return None
 
 def ketik_pelan_st(teks, jeda=0.04):
     placeholder = st.empty()
@@ -28,32 +40,30 @@ def main():
     st.markdown("<p style='text-align: center;'>Sebuah surat terbuka untuk rumah yang kita bangun bersama.</p>", unsafe_allow_html=True)
     st.divider()
 
-    # --- GALERI FOTO ---
     st.subheader("📸 Galeri Perjalanan Kita")
     col1, col2 = st.columns(2)
     
-    with col1:
-        try:
-            st.image("sahabat.jpg", caption="Solidaritas Angkatan 6", use_container_width=True)
-        except: st.warning("sahabat.jpg tidak ditemukan")
-        try:
-            st.image("safari.jpg", caption="The Grand Taman Safari", use_container_width=True)
-        except: st.warning("safari.jpg tidak ditemukan")
+    # List gambar yang akan ditampilkan
+    gambar_list = [
+        ("sahabat.jpg", "Solidaritas Angkatan 6"),
+        ("safari.jpg", "The Grand Taman Safari"),
+        ("jatimpark.jpg", "Keceriaan Jatim Park 1"),
+        ("museum.jpg", "Interactive Living Museum")
+    ]
 
-    with col2:
-        try:
-            st.image("jatimpark.jpg", caption="Keceriaan Jatim Park 1", use_container_width=True)
-        except: st.warning("jatimpark.jpg tidak ditemukan")
-        try:
-            st.image("museum.jpg", caption="Interactive Living Museum", use_container_width=True)
-        except: st.warning("museum.jpg tidak ditemukan")
+    for i, (fname, cap) in enumerate(gambar_list):
+        img = ambil_gambar(fname)
+        target_col = col1 if i % 2 == 0 else col2
+        with target_col:
+            if img:
+                st.image(img, caption=cap, use_container_width=True)
+            else:
+                st.error(f"❌ {fname} tidak ditemukan di GitHub")
 
     st.divider()
 
-    # --- PESAN PERPISAHAN ---
     if st.button("✨ Klik untuk Membaca Pesan Terakhir"):
         st.snow()
-        # Audio Player (Lagu Galau Instrumen)
         st.write("🎵 *Putar musik ini, baca pelan-pelan...*")
         st.audio("https://soundhelix.com")
 
@@ -75,3 +85,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
