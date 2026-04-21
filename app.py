@@ -1,16 +1,19 @@
 import streamlit as st
 import time
-from PIL import Image
 import os
 
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(page_title="Kenangan Angkatan 6", page_icon="🎓", layout="centered")
 
+# CSS untuk tampilan gelap dan animasi sederhana
 st.markdown("""
     <style>
     .stApp { background-color: #0e1117; color: white; }
     h1 { color: #00d4ff; text-align: center; }
     .stButton>button { width: 100%; border-radius: 25px; background-color: #1f77b4; color: white; height: 3em; }
+    /* Animasi fade in untuk gambar */
+    .stImage { animation: fadeIn 2s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
     """, unsafe_allow_html=True)
 
@@ -28,31 +31,45 @@ def main():
     st.markdown("<p style='text-align: center;'>Sebuah surat terbuka untuk rumah yang kita bangun bersama.</p>", unsafe_allow_html=True)
     st.divider()
 
-    st.subheader("📸 Galeri Perjalanan Kita")
+    # --- BAGIAN MUSIK DI ATAS ---
+    st.subheader("🎵 Putar musik ini dulu ya...")
+    # Link audio lagu galau (Instrumen Piano Sedih)
+    st.audio("https://soundhelix.com")
+    st.caption("Disarankan: Putar musik di atas sebelum scroll ke bawah.")
+    st.divider()
+
+    # --- GALERI FOTO BERTAHAP ---
+    st.subheader("📸 Menghidupkan Kenangan...")
+    
+    gambar_list = [
+        {"file": "sahabat.jpg", "caption": "Solidaritas Tanpa Batas"},
+        {"file": "safari.jpg", "caption": "Momen di Safari Prigen"},
+        {"file": "jatimpark.jpg", "caption": "Tawa di Jatim Park 1"},
+        {"file": "museum.jpg", "caption": "Interactive Living Museum"}
+    ]
+
     col1, col2 = st.columns(2)
     
-    # List gambar
-    gambar_list = ["sahabat.jpg", "safari.jpg", "jatimpark.jpg", "museum.jpg"]
-    captions = ["Solidaritas Angkatan 6", "The Grand Taman Safari", "Keceriaan Jatim Park 1", "Interactive Living Museum"]
-
-    for i, fname in enumerate(gambar_list):
+    # Proses pemunculan foto bertahap
+    for i, item in enumerate(gambar_list):
+        time.sleep(1.5) # Jeda 1.5 detik tiap foto muncul
         target_col = col1 if i % 2 == 0 else col2
         with target_col:
-            if os.path.exists(fname):
+            if os.path.exists(item["file"]):
                 try:
-                    img = Image.open(fname)
-                    st.image(img, caption=captions[i], use_container_width=True)
-                except Exception as e:
-                    st.error(f"⚠️ Foto {fname} rusak/tidak terbaca. Coba upload ulang.")
+                    with open(item["file"], "rb") as f:
+                        img_data = f.read()
+                    st.image(img_data, caption=item["caption"], use_container_width=True)
+                except:
+                    st.error(f"⚠️ {item['file']} rusak.")
             else:
-                st.warning(f"🔍 {fname} belum ada di GitHub.")
+                st.warning(f"🔍 Menunggu {item['file']}...")
 
     st.divider()
 
-    if st.button("✨ Klik untuk Membaca Pesan Terakhir"):
-        st.snow()
-        st.audio("https://soundhelix.com")
-
+    # --- PESAN PERPISAHAN TANPA EFEK SALJU/BALON ---
+    if st.button("✨ Baca Pesan Terakhir"):
+        # Efek visual dihilangkan sesuai permintaan
         konten = [
             "**Assalamualaikum Warahmatullahi Wabarakatuh.**\n\nKepada Bapak dan Ibu guru yang kami muliakan, serta teman-teman seperjuangan Angkatan 6 yang luar biasa.",
             "Rasanya baru kemarin kita berdiri di lapangan ini dengan seragam yang masih kaku. Kita datang membawa mimpi masing-masing, namun takdir mempertemukan kita di sini sebagai keluarga.",
@@ -66,8 +83,8 @@ def main():
             ketik_pelan_st(paragraf)
             time.sleep(0.5)
 
-        st.balloons()
         st.success("✨ Angkatan 6 - Selamanya Keluarga ✨")
+        st.markdown("<h3 style='text-align: center;'>See You on Top! 🚀</h3>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
