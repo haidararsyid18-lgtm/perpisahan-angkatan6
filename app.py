@@ -14,18 +14,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Fungsi untuk mencari file gambar secara otomatis (cek huruf besar/kecil)
-def ambil_gambar(nama_file):
-    # Daftar kemungkinan ekstensi
-    ekstensi = ['.jpg', '.JPG', '.jpeg', '.png']
-    nama_tanpa_ext = os.path.splitext(nama_file)[0]
-    
-    for ext in ekstensi:
-        path = nama_tanpa_ext + ext
-        if os.path.exists(path):
-            return Image.open(path)
-    return None
-
 def ketik_pelan_st(teks, jeda=0.04):
     placeholder = st.empty()
     isi = ""
@@ -43,28 +31,26 @@ def main():
     st.subheader("📸 Galeri Perjalanan Kita")
     col1, col2 = st.columns(2)
     
-    # List gambar yang akan ditampilkan
-    gambar_list = [
-        ("sahabat.jpg", "Solidaritas Angkatan 6"),
-        ("safari.jpg", "The Grand Taman Safari"),
-        ("jatimpark.jpg", "Keceriaan Jatim Park 1"),
-        ("museum.jpg", "Interactive Living Museum")
-    ]
+    # List gambar
+    gambar_list = ["sahabat.jpg", "safari.jpg", "jatimpark.jpg", "museum.jpg"]
+    captions = ["Solidaritas Angkatan 6", "The Grand Taman Safari", "Keceriaan Jatim Park 1", "Interactive Living Museum"]
 
-    for i, (fname, cap) in enumerate(gambar_list):
-        img = ambil_gambar(fname)
+    for i, fname in enumerate(gambar_list):
         target_col = col1 if i % 2 == 0 else col2
         with target_col:
-            if img:
-                st.image(img, caption=cap, use_container_width=True)
+            if os.path.exists(fname):
+                try:
+                    img = Image.open(fname)
+                    st.image(img, caption=captions[i], use_container_width=True)
+                except Exception as e:
+                    st.error(f"⚠️ Foto {fname} rusak/tidak terbaca. Coba upload ulang.")
             else:
-                st.error(f"❌ {fname} tidak ditemukan di GitHub")
+                st.warning(f"🔍 {fname} belum ada di GitHub.")
 
     st.divider()
 
     if st.button("✨ Klik untuk Membaca Pesan Terakhir"):
         st.snow()
-        st.write("🎵 *Putar musik ini, baca pelan-pelan...*")
         st.audio("https://soundhelix.com")
 
         konten = [
