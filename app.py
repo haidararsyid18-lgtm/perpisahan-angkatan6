@@ -26,16 +26,14 @@ def main():
     st.title("🎓 Jejak Langkah & Air Mata: Pamitnya Angkatan 6")
     st.divider()
 
-    # --- MUSIK ---
     st.subheader("🎵 Putar musik galau ini dulu...")
-    # Menggunakan link stream lagu yang lebih stabil
+    # Link musik instrumental sedih yang stabil
     audio_url = "https://bensound.com"
     st.audio(audio_url, format="audio/mp3")
     st.info("Setelah musik berputar, scroll pelan-pelan ke bawah...")
     
     st.divider()
 
-    # --- GALERI FOTO BERTAHAP ---
     st.subheader("📸 Menghidupkan Kenangan...")
     
     gambar_list = [
@@ -51,16 +49,18 @@ def main():
         target_col = col1 if i % 2 == 0 else col2
         with target_col:
             if os.path.exists(item["file"]):
-                # Jeda agar muncul bertahap
+                # Efek muncul satu per satu
                 time.sleep(1.5)
-                # Cara paling simpel agar tidak error PIL
-                st.image(item["file"], caption=item["caption"], use_container_width=True)
+                try:
+                    # Mencoba menampilkan gambar
+                    st.image(item["file"], caption=item["caption"], use_container_width=True)
+                except Exception:
+                    st.error(f"⚠️ File {item['file']} bukan gambar asli. Silakan HAPUS di GitHub dan UPLOAD ulang filenya.")
             else:
-                st.warning(f"🔍 File {item['file']} tidak ditemukan.")
+                st.warning(f"🔍 File {item['file']} tidak ditemukan di GitHub.")
 
     st.divider()
 
-    # --- PESAN PERPISAHAN ---
     if st.button("✨ Klik untuk Membaca Pesan Terakhir"):
         konten = [
             "**Assalamualaikum Warahmatullahi Wabarakatuh.**\n\nKepada Bapak dan Ibu guru yang kami muliakan, serta teman-teman seperjuangan Angkatan 6 yang luar biasa.",
@@ -79,3 +79,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
