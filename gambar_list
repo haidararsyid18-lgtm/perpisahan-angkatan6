@@ -1,0 +1,8 @@
+for i, item in enumerate(gambar_list):
+    target_col = col1 if i % 2 == 0 else col2
+    with target_col:
+        try:
+            # Gunakan URL jika sudah pakai cara nomor 2, atau file lokal jika tetap nomor 1
+            st.image(item["file"], caption=item["caption"], use_container_width=True)
+        except Exception as e:
+            st.error(f"Gagal memuat gambar {item['caption']}. Pastikan file formatnya benar.")
