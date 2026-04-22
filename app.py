@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import os
 
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(page_title="Kenangan Angkatan 6", page_icon="🎓", layout="centered")
@@ -25,23 +26,21 @@ def main():
     st.title("🎓 Jejak Langkah & Air Mata: Pamitnya Angkatan 6")
     st.divider()
 
-    st.subheader("🎵 Putar musik perpisahan...")
-    # Link lagu piano sedih yang stabil
+    st.subheader("🎵 Putar musik galau ini dulu...")
+    # PERBAIKAN: Link harus langsung ke file .mp3 agar tidak error
     audio_url = "https://soundhelix.com"
     st.audio(audio_url, format="audio/mp3")
+    st.info("Setelah musik berputar, scroll pelan-pelan ke bawah...")
     
     st.divider()
 
     st.subheader("📸 Menghidupkan Kenangan...")
     
-    # MENGGUNAKAN RAW URL GITHUB (Ganti username jika perlu)
-    base_url = "https://githubusercontent.com"
-    
     gambar_list = [
-        {"url": base_url + "sahabat.jpg", "caption": "Solidaritas Angkatan 6"},
-        {"url": base_url + "safari.jpg", "caption": "The Grand Taman Safari"},
-        {"url": base_url + "jatimpark.jpg", "caption": "Keceriaan Jatim Park 1"},
-        {"url": base_url + "museum.jpg", "caption": "Interactive Living Museum"}
+        {"file": "sahabat.jpg", "caption": "Solidaritas Angkatan 6"},
+        {"file": "safari.jpg", "caption": "The Grand Taman Safari"},
+        {"file": "jatimpark.jpg", "caption": "Keceriaan Jatim Park 1"},
+        {"file": "museum.jpg", "caption": "Interactive Living Museum"}
     ]
 
     col1, col2 = st.columns(2)
@@ -49,19 +48,27 @@ def main():
     for i, item in enumerate(gambar_list):
         target_col = col1 if i % 2 == 0 else col2
         with target_col:
-            # Gunakan try-except agar jika 1 gambar error, aplikasi TIDAK MATI
-            try:
-                st.image(item["url"], caption=item["caption"], use_container_width=True)
-            except:
-                st.warning(f"⚠️ Gambar '{item['caption']}' gagal dimuat. Coba cek file di GitHub.")
+            if os.path.exists(item["file"]):
+                # Efek muncul satu per satu
+                time.sleep(0.5) # Dipercepat sedikit agar tidak terlalu lama
+                try:
+                    # PERBAIKAN: Tambahkan pengecekan ukuran file agar tidak crash
+                    st.image(item["file"], caption=item["caption"], use_container_width=True)
+                except Exception as e:
+                    # Jika file .jpg ternyata rusak/corrupt, dia akan menampilkan pesan ini bukan error merah
+                    st.error(f"⚠️ Gambar '{item['caption']}' rusak/tidak bisa dibaca. Coba upload ulang file {item['file']} ke GitHub.")
+            else:
+                st.warning(f"🔍 File {item['file']} tidak ditemukan di GitHub.")
 
     st.divider()
 
     if st.button("✨ Klik untuk Membaca Pesan Terakhir"):
         konten = [
-            "**Assalamualaikum Warahmatullahi Wabarakatuh.**",
-            "Rasanya baru kemarin kita berdiri di lapangan ini dengan seragam yang masih kaku. Takdir mempertemukan kita sebagai keluarga.",
-            "Izinkan kami memohon maaf yang sedalam-dalamnya atas segala khilaf.",
+            "**Assalamualaikum Warahmatullahi Wabarakatuh.**\n\nKepada Bapak dan Ibu guru yang kami muliakan, serta teman-teman seperjuangan Angkatan 6 yang luar biasa.",
+            "Rasanya baru kemarin kita berdiri di lapangan ini dengan seragam yang masih kaku. Takdir mempertemukan kita di sini sebagai keluarga.",
+            "Di sekolah ini, kita belajar arti solidaritas dan tawa. Foto-foto di atas adalah saksi bisu perjalanan kita.",
+            "Kami sadar langkah kami tak selalu lurus. Izinkan kami memohon maaf yang sedalam-dalamnya atas segala khilaf.",
+            "\"Perpisahan hanya untuk mereka yang mencintai dengan mata. Bagi yang mencintai dengan hati, tidak ada yang namanya perpisahan.\"",
             "Terima kasih untuk segalanya. Kami, Angkatan 6, pamit undur diri untuk terbang lebih tinggi.\n\n**Wassalamualaikum Warahmatullahi Wabarakatuh.**"
         ]
 
@@ -69,9 +76,8 @@ def main():
             ketik_pelan_st(paragraf)
             time.sleep(0.5)
 
-        st.balloons()
+        st.balloons() # Tambahan biar lebih seru
         st.success("✨ Angkatan 6 - Selamanya Keluarga ✨")
 
 if __name__ == "__main__":
     main()
-
