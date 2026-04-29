@@ -28,7 +28,7 @@ def main():
 
     st.subheader("🎵 Putar musik galau ini dulu...")
     # PERBAIKAN: Link harus langsung ke file .mp3 agar tidak error
-    audio_url = "https://soundhelix.com"
+    audio_url = "https://youtu.be/LM9Ron2I4h0?si=sPnBLy2sMwII76g"
     st.audio(audio_url, format="audio/mp3")
     st.info("Setelah musik berputar, scroll pelan-pelan ke bawah...")
     
